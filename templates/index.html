@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Citizen AI Platform</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #dfe9f3, #ffffff);
+    margin: 0;
+}
+
+.header {
+    background: linear-gradient(90deg, #007bff, #00c6ff);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.container {
+    width: 90%;
+    max-width: 520px;
+    margin: 30px auto;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(20px);}
+    to {opacity:1; transform: translateY(0);}
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+#preview {
+    margin-top: 10px;
+    max-width: 100%;
+    border-radius: 10px;
+    display: none;
+}
+
+button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+button:hover {
+    transform: scale(1.02);
+}
+
+.ai-box {
+    background: #eef7ff;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.priority-badge {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: white;
+}
+
+.high { background: red; }
+.medium { background: orange; }
+.low { background: green; }
+
+.challenges-link {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #007bff;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+🌆 Smart Citizen AI Platform
+</div>
+
+<div class="container">
+<h1>🚀 Report a Civic Issue</h1>
+
+<form action="/submit" method="POST" enctype="multipart/form-data">
+
+<label>Your Name</label>
+<input type="text" name="name" id="username" required>
+
+<label>Select Issue Type</label>
+<select id="issueType" required>
+    <option value="">--Select Issue--</option>
+    <option>Garbage problem</option>
+    <option>Pothole on road</option>
+    <option>Water leakage</option>
+    <option>Electricity issue</option>
+    <option>Traffic congestion</option>
+    <option>Noise pollution</option>
+    <option>Flooding</option>
+    <option>Open manhole</option>
+</select>
+
+<label>Describe the Issue</label>
+<textarea name="issue" id="issueText" required></textarea>
+
+<div class="ai-box" id="aiHint">
+🤖 AI analyzing...
+</div>
+
+<label>Area / Location</label>
+<input type="text" name="location" required>
+
+<label>Nearby Landmark</label>
+<input type="text" name="landmark">
+
+<label>Upload Photo</label>
+<input type="file" name="photo" accept="image/*" onchange="previewImage(event)" required>
+<img id="preview">
+
+<button type="submit">Submit Complaint</button>
+
+</form>
+
+<div class="challenges-link" onclick="goToChallenges()">
+🎯 View Challenges & Earn Rewards
+</div>
+
+</div>
+
+<script>
+// 📷 Image preview
+function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function(){
+        const img = document.getElementById('preview');
+        img.src = reader.result;
+        img.style.display = "block";
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+// 🤖 AI Live Feedback
+document.getElementById("issueText").addEventListener("input", function(){
+    let text = this.value.toLowerCase();
+    let hint = document.getElementById("aiHint");
+
+    if(text.includes("fire") || text.includes("gas") || text.includes("shock")){
+        hint.innerHTML = "🔥 AI: Dangerous Issue detected <span class='priority-badge high'>High Priority</span>";
+    }
+    else if(text.includes("garbage")){
+        hint.innerHTML = "🗑 AI: Waste Issue <span class='priority-badge medium'>Medium Priority</span>";
+    }
+    else if(text.includes("leak") || text.includes("water")){
+        hint.innerHTML = "💧 AI: Water Issue <span class='priority-badge medium'>Medium Priority</span>";
+    }
+    else if(text.includes("pothole")){
+        hint.innerHTML = "🛣 AI: Road Damage <span class='priority-badge medium'>Medium Priority</span>";
+    }
+    else{
+        hint.innerHTML = "🤖 AI analyzing...";
+    }
+});
+
+// Combine dropdown + text
+document.querySelector("form").addEventListener("submit", function(){
+    const type = document.getElementById("issueType").value;
+    const desc = document.getElementById("issueText").value;
+    document.getElementById("issueText").value = type + " - " + desc;
+});
+
+// Navigate to challenges
+function goToChallenges() {
+    const name = document.getElementById("username").value;
+    if(name === "") {
+        alert("Enter your name first!");
+        return;
+    }
+    window.location.href = "/challenges?user=" + name;
+}
+</script>
+
+</body>
+</html>

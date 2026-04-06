@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Civic Dashboard - Stats & Rewards</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #eef2f7;
+    margin: 0;
+}
+
+/* HEADER */
+.header {
+    background: linear-gradient(90deg,#007bff,#00c6ff);
+    color: white;
+    padding: 18px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* CONTAINER */
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 20px auto;
+}
+
+/* STATS */
+.stats {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    flex: 1;
+    min-width: 200px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.high-box { border-top: 5px solid red; }
+.medium-box { border-top: 5px solid orange; }
+.low-box { border-top: 5px solid green; }
+.total-box { border-top: 5px solid #007bff; }
+
+/* LEADERBOARD */
+.leaderboard {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.leaderboard h2 {
+    text-align: center;
+}
+
+/* SEARCH */
+.search-box {
+    margin-bottom: 15px;
+    text-align: right;
+}
+.search-box input {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background: #f0f0f0;
+}
+
+tr:hover {
+    background: #f9f9f9;
+}
+
+/* RANK */
+.rank {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* PROGRESS BAR */
+.points-bar {
+    height: 20px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.points-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg,#007bff,#00c6ff);
+    color: white;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+}
+
+/* BADGES */
+.badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: white;
+    font-size: 13px;
+}
+.gold { background: gold; color: black; }
+.silver { background: silver; }
+.bronze { background: #cd7f32; }
+
+/* TOP USER HIGHLIGHT */
+.top1 { background: #fff8e1; }
+.top2 { background: #f1f8ff; }
+.top3 { background: #f9fbe7; }
+
+/* MOBILE */
+@media(max-width:768px){
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    tr {
+        margin-bottom: 15px;
+        background: white;
+        border-radius: 10px;
+        padding: 10px;
+    }
+    th {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+🚀 AI Civic Dashboard - Stats & Rewards
+</div>
+
+<div class="container">
+
+<!-- ===== STATS ===== -->
+<div class="stats">
+    <div class="stat-card high-box">🔥 High Priority<br>{{ data.high }}</div>
+    <div class="stat-card medium-box">⚠️ Medium<br>{{ data.medium }}</div>
+    <div class="stat-card low-box">✅ Low<br>{{ data.low }}</div>
+    <div class="stat-card total-box">📊 Total<br>{{ data.total }}</div>
+</div>
+
+<!-- ===== LEADERBOARD ===== -->
+<div class="leaderboard">
+<h2>🏆 Top Smart Citizens</h2>
+
+<div class="search-box">
+    <input type="text" id="searchUser" placeholder="Search user..." onkeyup="searchUser()">
+</div>
+
+<table id="leaderboardTable">
+<tr>
+    <th>Rank</th>
+    <th>Citizen</th>
+    <th>Complaints</th>
+    <th>Points</th>
+    <th>Progress</th>
+    <th>Badge</th>
+</tr>
+
+{% for u in leaderboard %}
+<tr class="
+    {% if loop.index == 1 %}top1
+    {% elif loop.index == 2 %}top2
+    {% elif loop.index == 3 %}top3
+    {% endif %}
+">
+
+<td class="rank">
+    {% if loop.index == 1 %}🥇
+    {% elif loop.index == 2 %}🥈
+    {% elif loop.index == 3 %}🥉
+    {% else %}{{ loop.index }}
+    {% endif %}
+</td>
+
+<td>{{ u.name }}</td>
+<td>{{ u.count }}</td>
+<td>{{ u.points }}</td>
+
+<td>
+    <div class="points-bar">
+        <div class="points-fill" style="width: {{ u.points }}%">
+            {{ u.points }}
+        </div>
+    </div>
+</td>
+
+<td>
+    {% if u.points >= 20 %}
+        <span class="badge gold">🥇 Gold</span>
+    {% elif u.points >= 10 %}
+        <span class="badge silver">🥈 Silver</span>
+    {% else %}
+        <span class="badge bronze">🥉 Bronze</span>
+    {% endif %}
+</td>
+
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+// SEARCH FUNCTION
+function searchUser(){
+    let input = document.getElementById("searchUser").value.toLowerCase();
+    let rows = document.querySelectorAll("#leaderboardTable tr");
+
+    rows.forEach((row, index) => {
+        if(index === 0) return;
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(input) ? "" : "none";
+    });
+}
+</script>
+
+</body>
+</html>

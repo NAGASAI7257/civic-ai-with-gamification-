@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌱 Environmental Challenges</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #eef2f7;
+    margin: 0;
+}
+
+/* HEADER */
+.header {
+    background: linear-gradient(90deg,#28a745,#20c997);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+/* CONTAINER */
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+/* PROGRESS SECTION */
+.progress-box {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+    height: 20px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg,#28a745,#20c997);
+    text-align: center;
+    color: white;
+    font-size: 12px;
+    line-height: 20px;
+}
+
+/* CHALLENGE CARD */
+.challenge-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+.challenge-card:hover {
+    transform: scale(1.02);
+}
+
+.challenge-card.completed {
+    border-left: 6px solid #28a745;
+    opacity: 0.8;
+}
+
+.challenge-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.challenge-desc {
+    font-size: 14px;
+    color: #555;
+    margin: 8px 0;
+}
+
+.points {
+    font-weight: bold;
+    color: #ff5722;
+}
+
+/* BUTTON */
+.btn-complete {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: linear-gradient(45deg,#007bff,#00c6ff);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-complete:hover {
+    opacity: 0.9;
+}
+
+.completed-text {
+    color: green;
+    font-weight: bold;
+}
+
+/* USER STATS */
+.user-stats {
+    text-align: center;
+    margin-top: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.level-badge {
+    padding: 5px 12px;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+}
+
+.level-bronze { background: #cd7f32; }
+.level-silver { background: #c0c0c0; }
+.level-gold { background: #ffd700; color:black; }
+
+/* AI TIP */
+.ai-tip {
+    background: #e3f2fd;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: #007bff;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    .challenge-card {
+        font-size: 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+🌱 Environmental Challenges
+</div>
+
+<div class="container">
+
+<!-- USER PROGRESS -->
+<div class="progress-box">
+    <h3>🏆 Your Progress</h3>
+    <p><strong>{{ user.points }}</strong> XP</p>
+
+    <div class="progress-bar">
+        <div class="progress-fill" style="width: {{ user.points }}%">
+            {{ user.points }}%
+        </div>
+    </div>
+
+    <p>
+        Level:
+        <span class="level-badge 
+        {% if user.level == 'Bronze' %}level-bronze
+        {% elif user.level == 'Silver' %}level-silver
+        {% elif user.level == 'Gold' %}level-gold{% endif %}">
+        {{ user.level }}
+        </span>
+    </p>
+</div>
+
+<!-- AI TIP -->
+<div class="ai-tip">
+🤖 AI Suggestion: Completing environmental challenges improves your city ranking and reduces pollution impact.
+</div>
+
+<!-- CHALLENGES -->
+{% for c in challenges %}
+<div class="challenge-card 
+{% if user.name in c.completed_list %}completed{% endif %}">
+
+    <div class="challenge-title">🌿 {{ c.title }}</div>
+    <div class="challenge-desc">{{ c.description }}</div>
+    <div class="points">+{{ c.points_reward }} Points</div>
+
+    {% if user.name not in c.completed_list %}
+    <form action="/complete_challenge" method="POST">
+        <input type="hidden" name="challenge_id" value="{{ c.id }}">
+        <input type="hidden" name="user_name" value="{{ user.name }}">
+        <button type="submit" class="btn-complete">Complete Challenge</button>
+    </form>
+    {% else %}
+    <div class="completed-text">✅ Completed</div>
+    {% endif %}
+
+</div>
+{% endfor %}
+
+<!-- USER SUMMARY -->
+<div class="user-stats">
+    <h3>👤 Your Stats</h3>
+    <p>Total Points: <strong>{{ user.points }}</strong></p>
+    <p>Level: 
+        <span class="level-badge 
+        {% if user.level == 'Bronze' %}level-bronze
+        {% elif user.level == 'Silver' %}level-silver
+        {% elif user.level == 'Gold' %}level-gold{% endif %}">
+        {{ user.level }}
+        </span>
+    </p>
+</div>
+
+</div>
+
+</body>
+</html>
